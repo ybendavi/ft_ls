@@ -1,0 +1,15 @@
+-R: va chercher recursivement tous les sous dossiers et sous fichier 
+-a: affiche les fichiers cache
+-r: inverse l'ordre d'affichage
+-l: affiche les info detaille
+
+1.separer les flags des dossiers et fichiers
+2.checker les flags pour qu'on sache les options activees (si un flag n'existe pas sortir immediatement)
+3.ouvrir tous les dossiers en les envoyant respectivement dans une fonction de traitement des dossiers
+    -s'il n'y a pas de dossiers le '.' sera utilise
+    -si le r est active, inverser l'ordre de traitement
+4.fonction de traitement des dossier:
+    -si l est active
+
+a faire:
+-coder une fonction a laquel on passe une structure dirent et qui retourne une chaine de caractere formate sur le model de ls -l

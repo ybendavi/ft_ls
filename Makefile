@@ -3,7 +3,7 @@ NAME = ft_ls
 CC = gcc
 RM = rm -f
 FLAGS = -Wall -Wextra -Werror
-SRCS = *.c
+SRCS = main.c
 
 OBJS = ${SRCS:.c=.o}
 
@@ -11,7 +11,7 @@ $(NAME): $(OBJS)
 		$(MAKE) -C ${LIBFT}
 		$(CC) $(OBJS) -Llibft -lft -Wall -Wextra -Werror -o $(NAME)
 
-all: 	$(NAME)	
+all: 	$(NAME)
 
 clean:
 	$(MAKE) clean -C ${LIBFT}
