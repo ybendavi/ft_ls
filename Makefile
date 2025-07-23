@@ -2,16 +2,19 @@ LIBFT = ./libft
 NAME = ft_ls
 CC = gcc
 RM = rm -f
-FLAGS = -Wall -Wextra -Werror
-SRCS = main.c
+FLAGS = -Wall -Wextra -Werror -g
+SRCS = format_flags.c
 
 OBJS = ${SRCS:.c=.o}
 
 $(NAME): $(OBJS)
 		$(MAKE) -C ${LIBFT}
-		$(CC) $(OBJS) -Llibft -lft -Wall -Wextra -Werror -o $(NAME)
+		$(CC) $(FLAGS) $(OBJS) -Llibft -lft -o $(NAME)
 
-all: 	$(NAME)
+%.o: %.c
+		$(CC) $(FLAGS) -c $< -o $@
+
+all:	$(NAME)
 
 clean:
 	$(MAKE) clean -C ${LIBFT}
@@ -21,7 +24,6 @@ fclean:
 		$(MAKE) fclean -C ${LIBFT}
 		$(RM) ${NAME}
 		${RM} ${OBJS}
-
 
 re: fclean all
 	$(MAKE) re -C ${LIBFT}
