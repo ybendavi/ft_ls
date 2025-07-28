@@ -3,7 +3,7 @@ NAME = ft_ls
 CC = gcc
 RM = rm -f
 FLAGS = -Wall -Wextra -Werror -g
-SRCS = format_flags.c
+SRCS = main.c dir_content_handler.c
 
 OBJS = ${SRCS:.c=.o}
 

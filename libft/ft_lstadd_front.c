@@ -18,10 +18,13 @@ void	ft_lstadd_front(t_list **alst, t_list *new)
 	{
 		*alst = new;
 		new->next = NULL;
+		new->prev = NULL;
 	}
 	else if (*alst != NULL && new != NULL)
 	{
 		new->next = *alst;
+		new->prev = NULL;
+		new->next->prev = new;
 		*alst = new;
 	}
 }

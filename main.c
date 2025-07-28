@@ -1,32 +1,10 @@
 #include "ft_ls.h"
 
-void lookup(char *directory_name, char *args)
-{
-    DIR *dirp;
-    struct dirent *dp;
-
-
-    if ((dirp = opendir(directory_name ? directory_name : ".")) == NULL) {
-        perror("couldn't open '.'");
-        return;
-    }
-
-    dp = readdir(dirp);
-    while (dp)
-    {
-        ft_printf("%s\n", dp->d_name);
-        dp = readdir(dirp);
-    }
-    closedir(dirp);
-}
-
-char* flags_checker(char **av)
+char* flags_checker(char **av, char *flags)
 {
     int i;
     int j;
-    char *flags;
-
-    flags = (char*)ft_calloc(6, sizeof(char));
+    ft_bzero(flags, 6);
     if (av)
     {
         for (i = 1; av[i]; i++)
@@ -43,13 +21,11 @@ char* flags_checker(char **av)
                 {
                     if (ft_strchr(FLAGS, av[i][j]))
                     {
-                        ft_strlcat(flags, &av[i][j], 1);
+                        if (!ft_strchr(flags, av[i][j]))
+                            ft_strlcat(flags, &av[i][j], 1);
                     }
                     else
-                    {
-                        free(flags);
                         exit(2);
-                    }
                 }
             }
         }
@@ -57,13 +33,14 @@ char* flags_checker(char **av)
     return (flags);
 }
 
-t_list** open_dirs(char **av)
+int open_dirs_args(char **av, t_list **dirs)
 {
     int i;
-    t_list **dirs;
+    int res;
+    int j;
     DIR *dirp;
 
-    dirs = NULL;
+    res = 1;
     if (av)
     {
         for (i=1; av[i]; i++)
@@ -71,34 +48,49 @@ t_list** open_dirs(char **av)
             if (av[i][0] && av[i][0] != '-')
             {
                 if ((dirp = opendir(av[i])) == NULL)
+                    perror(av[i]);
+                else
                 {
-                    perror("cannot access : No such file or directory");
-                    if (dirs)
-                        ft_lstclear(dirs, &close);                    
-                    exit(2);
+                    ft_lstadd_back(dirs, ft_lstnew(dirp));
+                    res = 0;
                 }
-                ft_lstadd_back(dirs, ft_lstnew(dirp));
             }
+            else
+                j++;
         }
     }
-    return (dirs);
+    res = j == i ? 3 : res;
+    return (res);
 }
+
+void    launcher(char **av, char *flags)
+{
+    t_list **dir_list;
+    int     ret;
+
+    (void)flags;
+    dir_list = ft_calloc(sizeof(t_list*), 1);
+    ret = open_dirs_args(av, dir_list);
+    switch (ret)
+    {
+        case 0:
+            ft_lstiter(*dir_list, (void*)&look_in_dir);
+            break;
+    }
+    ft_lstclear(dir_list, (void*)closedir);
+    free(dir_list);
+
+}
+
 int main(int ac, char **av)
 {
-    int i;
-    t_list **dir_list;
-    DIR *dirp;
-    char *flags;
+    char flags[6];
     
-    flags = flags_checker(av);
-    ft_printf("%s", flags);
-    free(flags);
-    return (0);
-    dir_list = NULL;
-    if (av)
-    {
-        dir_list = open_dirs(av);
-    }
+    (void)ac;
+    flags_checker(av, flags);
+    //ft_printf("%s", flags);
+
+    launcher(av, flags);
     //lookup(av[1]);
     return (0);
 }

@@ -84,17 +84,20 @@ void    print_infos(char *buff, struct stat sb, struct passwd *owner, struct gro
 
 void get_infos(char *path)
 {
-    struct stat sb;
+    struct stat sblstat;
+
     struct passwd *owner;
     struct group    *growner;
     char buff[12];
+    char lbuff[4098 + ft_strlen(path) + 4];
     //int             sticky_bit;
 
     ft_bzero(buff, 12);
-    if (lstat(path, &sb) == -1)
+    ft_bzero(lbuff, 4098 + ft_strlen(path) + 4);
+    if (lstat(path, &sblstat) == -1)
     {
-        perror("lstat");
-        return;
+        perror(strerror(errno));
+        exit(errno);
     }
     /*printf("I-node number:            %ld\n",  sb.st_ino);
     printf("Mode:                     %o (octal)\n",
@@ -102,8 +105,8 @@ void get_infos(char *path)
     printf("Link count:               %ld\n",  sb.st_nlink);
     printf("Ownership:                UID=%u   GID=%u\n",
              sb.st_uid,  sb.st_gid);*/
-    owner = getpwuid(sb.st_uid);
-    growner = getgrgid(sb.st_gid);
+    owner = getpwuid(sblstat.st_uid);
+    growner = getgrgid(sblstat.st_gid);
 /*
     ft_printf("User:%s\n", owner->pw_name);
     printf("Preferred I/O block size: %ld bytes\n",
@@ -115,8 +118,18 @@ void get_infos(char *path)
     printf("Last status change:       %s\n", ctime(&sb.st_ctime));
     printf("Last file access:         %s\n", ctime(&sb.st_atime));
     printf("Last file modification:   %s\n", ctime(&sb.st_mtime));*/
-    format_permissions(sb.st_mode, buff);
-    print_infos(buff, sb, owner, growner, path);
+    format_permissions(sblstat.st_mode, buff);
+    ft_memcpy(lbuff, path, ft_strlen(path));
+    if (buff[0] == 'l')
+    {
+        ft_strlcat(lbuff, " -> ", ft_strlen(lbuff) + 5);
+        if (readlink(path, &lbuff[ft_strlen(lbuff)], 4097) == -1)
+        {
+            perror(path);
+            exit(errno);
+        }
+    }
+    print_infos(buff, sblstat, owner, growner, lbuff);
 }
 
 #include <stdio.h>
@@ -185,8 +198,8 @@ void test_get_infos(const char *filename) {
 int main(int ac, char **av)
 {
 
-        test_get_infos(av[1]);
-        return 0;
+//        test_get_infos(av[1]);
+//      return 0;
     if (ac <= 1)
         return (0);
     get_infos(av[1]);

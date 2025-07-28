@@ -14,7 +14,7 @@
 NAME = libft.a
 CC = gcc
 RM = rm -f
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -g
 SRCS = \
 	ft_isalnum.c \
 	ft_memccpy.c \
@@ -58,6 +58,7 @@ SRCS = \
 	ft_lstdelone.c \
 	ft_lstclear.c \
 	ft_lstiter.c \
+	ft_lstiterr.c \
 	ft_lstmap.c \
 	ft_printf.c \
 	analize_format.c \
