@@ -71,6 +71,7 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 void	ft_lstiterr(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *),
 			void (*del)(void *));
+void    ft_lstadd_before(t_list *element, t_list *list_element);
 
 // PRINTF //
 

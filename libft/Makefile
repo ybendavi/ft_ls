@@ -59,6 +59,7 @@ SRCS = \
 	ft_lstclear.c \
 	ft_lstiter.c \
 	ft_lstiterr.c \
+	ft_lstadd_before.c \
 	ft_lstmap.c \
 	ft_printf.c \
 	analize_format.c \

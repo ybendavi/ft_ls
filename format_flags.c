@@ -97,7 +97,7 @@ void get_infos(char *path)
     if (lstat(path, &sblstat) == -1)
     {
         perror(strerror(errno));
-        exit(errno);
+        return;
     }
     /*printf("I-node number:            %ld\n",  sb.st_ino);
     printf("Mode:                     %o (octal)\n",
@@ -126,7 +126,7 @@ void get_infos(char *path)
         if (readlink(path, &lbuff[ft_strlen(lbuff)], 4097) == -1)
         {
             perror(path);
-            exit(errno);
+            return;
         }
     }
     print_infos(buff, sblstat, owner, growner, lbuff);

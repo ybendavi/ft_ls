@@ -1,82 +1,55 @@
 #include "ft_ls.h"
 
-char* flags_checker(char **av, char *flags)
+int    check_for_directories(char **av, t_list **dirs, int ac)
 {
-    int i;
-    int j;
-    ft_bzero(flags, 6);
-    if (av)
-    {
-        for (i = 1; av[i]; i++)
-        {
-            if (av[i][0] && av[i][0] == '-')
-            {
-                if (ft_strlen(av[i]) == 1)
-                {
-                    free(flags);
-                    ft_printf("invalid option -- \'-'\n");
-                    exit(2);
-                }
-                for (j = 1; av[i][j]; j++)
-                {
-                    if (ft_strchr(FLAGS, av[i][j]))
-                    {
-                        if (!ft_strchr(flags, av[i][j]))
-                            ft_strlcat(flags, &av[i][j], 1);
-                    }
-                    else
-                        exit(2);
-                }
-            }
-        }
-    }
-    return (flags);
-}
+    int     ret;
+    DIR     *dirp;
+    int     i;
 
-int open_dirs_args(char **av, t_list **dirs)
-{
-    int i;
-    int res;
-    int j;
-    DIR *dirp;
 
-    res = 1;
-    if (av)
+    ret = 1;
+    i = 1;
+    while (i < ac)
     {
-        for (i=1; av[i]; i++)
+        if (*av[i] != '-')
         {
-            if (av[i][0] && av[i][0] != '-')
-            {
-                if ((dirp = opendir(av[i])) == NULL)
-                    perror(av[i]);
-                else
-                {
-                    ft_lstadd_back(dirs, ft_lstnew(dirp));
-                    res = 0;
-                }
-            }
+            ret = 0;
+            if ((dirp = opendir(av[i])) == NULL)
+                perror(av[i]);
             else
-                j++;
+                ft_lstadd_back(dirs, ft_lstnew(dirp));
         }
+        i++;
     }
-    res = j == i ? 3 : res;
-    return (res);
+    return (ret);
 }
 
-void    launcher(char **av, char *flags)
+void current(int flags)
+{
+    DIR     *dirp;
+
+    if ((dirp = opendir(".")) == NULL)
+        perror(".");
+    look_in_dir(dirp, flags);
+    if (dirp)
+        closedir(dirp);
+}
+
+void    launcher(char **av, int flags, int ac)
 {
     t_list **dir_list;
-    int     ret;
 
     (void)flags;
     dir_list = ft_calloc(sizeof(t_list*), 1);
-    ret = open_dirs_args(av, dir_list);
-    switch (ret)
+    if (!check_for_directories(av, dir_list, ac))
     {
-        case 0:
-            ft_lstiter(*dir_list, (void*)&look_in_dir);
-            break;
+        if (flags & flag_value('r'))
+            ft_lstiterr_with_flag(*dir_list, (void *)look_in_dir, flags);
+        else
+            ft_lstiter_with_flag(*dir_list, (void *)look_in_dir, flags);
     }
+    else
+        current(flags);
     ft_lstclear(dir_list, (void*)closedir);
     free(dir_list);
 
@@ -84,13 +57,13 @@ void    launcher(char **av, char *flags)
 
 int main(int ac, char **av)
 {
-    char flags[6];
+    int flags;
     
-    (void)ac;
-    flags_checker(av, flags);
+
+    flags = flags_checker(&av[1], ac);
     //ft_printf("%s", flags);
 
-    launcher(av, flags);
+    launcher(av, flags, ac);
     //lookup(av[1]);
     return (0);
 }

@@ -3,7 +3,10 @@ NAME = ft_ls
 CC = gcc
 RM = rm -f
 FLAGS = -Wall -Wextra -Werror -g
-SRCS = main.c dir_content_handler.c
+SRCS =	main.c \
+		dir_content_handler.c \
+		flags_checker.c \
+		iter.c
 
 OBJS = ${SRCS:.c=.o}
 

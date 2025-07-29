@@ -2,11 +2,10 @@
 
 void	ft_lstiterr(t_list *lst, void (*f)(void *))
 {
-	while (lst != NULL && lst->next != NULL)
-		lst = lst->next;
-    while (lst && lst->prev)
+    if (lst)
     {
-        (*f)(lst->content);
-        lst = lst->prev;
+        ft_lstiterr(lst->next, f);
+        if (lst->content)
+            (*f)(lst->content);
     }
 }
