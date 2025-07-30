@@ -1,10 +1,5 @@
 #include "ft_ls.h"
 
-int    to_lower_map(int i, int c)
-{
-    (void)i;
-    return (ft_tolower(c));
-}
 
 
 //Only for testing
@@ -21,70 +16,37 @@ int    to_lower_map(int i, int c)
     }
 }*/
 
-void    sort_and_add(char *to_sort, t_list **content)
+
+
+int    look_in_dir(t_ls *dir_struct, int flags)
 {
-    t_list  *new_elem;
-    t_list  *on;
-    char    *str;
-    char    *str2;
-
-    on = *content;
-    new_elem = ft_lstnew(to_sort);
-    str =  ft_strmapi(to_sort, (void *)&to_lower_map);
-    str2 = on ? ft_strmapi(on->content, (void *)&to_lower_map) : NULL;
-    while (on && on->next && ft_strncmp(str2, str, ft_strlen(str))< 0)
-    {
-        on = on->next;
-        if (str2)
-            free(str2);
-        str2 = on ? ft_strmapi(on->content, (void *)&to_lower_map) : NULL;
-    }
-    if ((!on || !on->next) && (str2 == NULL || ft_strncmp(str2, str, ft_strlen(str)) < 0))
-        ft_lstadd_back(content, new_elem);
-    else if (!on->prev)
-        ft_lstadd_front(content, new_elem);
-    else
-        ft_lstadd_before(new_elem, on);
-    if (str2)
-        free(str2);
-    if (str)
-        free(str);
-}
-
-void lookup(DIR *dirp, struct dirent *dp, t_list **dircontent_list)
-{ 
-    t_list *first;
-
-    first = *dircontent_list;
-        if (dp)
-        {
-            sort_and_add(dp->d_name, dircontent_list);
-            lookup(dirp, readdir(dirp), dircontent_list);
-        }
-}
-
-void    clear(char *str)
-{
-    (void)str;
-    return;
-}
-
-void    look_in_dir(DIR *dirp, int flags)
-{
-    t_list  **dircontent_list;
+    t_list *dircontent_list_static = NULL;
+    t_list  **dircontent_list = &dircontent_list_static;
     t_list  *first;
 
-    (void)flags;
-    dircontent_list = ft_calloc(sizeof(t_list*), 1);
-    lookup(dirp, readdir(dirp), dircontent_list);
+
+    if (lookup(dir_struct, readdir(dir_struct->dirp), dircontent_list, flags))
+    {
+        ft_lstclear(dircontent_list, (void*)&free_de);
+        closedir(dir_struct->dirp);
+        free(dir_struct);
+        dir_struct = NULL;
+        return (1);
+    };
     first = *dircontent_list;
     while (first)
     {
-        printf("%s ", (char*)first->content);
+        t_de *content;
+
+        content = first->content;
+        if (content && content->dp && content->dp->d_name)
+            printf("%s ", (char*)content->dp->d_name);
         first = first->next;
-        
     }
-    ft_lstclear(dircontent_list, (void*)&clear);
-    free(dircontent_list);
+    ft_lstclear(dircontent_list, (void*)&free_de);
+    closedir(dir_struct->dirp);
+    free(dir_struct);
+    dir_struct = NULL;
     printf("\n");
+    return(0);
 }

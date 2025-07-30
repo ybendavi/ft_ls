@@ -3,13 +3,11 @@
 -r: inverse l'ordre d'affichage
 -l: affiche les info detaille
 
-1.separer les flags des dossiers et fichiers
-2.checker les flags pour qu'on sache les options activees (si un flag n'existe pas sortir immediatement)
-3.ouvrir tous les dossiers en les envoyant respectivement dans une fonction de traitement des dossiers
-    -s'il n'y a pas de dossiers le '.' sera utilise
-    -si le r est active, inverser l'ordre de traitement
-4.fonction de traitement des dossier:
-    -si l est active
+1.classer le contenu d'un directory par date si le -t est actif
+    - pour ca on va avoir besoin de recuperer la struct stat avec lstat
+2.faire une fonction qui en fonction de si -l est actif va adapter l'affichage
+3.il faut que quand il y a plusieurs dossiers ou fichiers a traiter (ou si on a le -R) on affiche non du dossier:\nla liste;
+3.gerer le recursif -R
 
 a faire:
 -coder une fonction a laquel on passe une structure dirent et qui retourne une chaine de caractere formate sur le model de ls -l
