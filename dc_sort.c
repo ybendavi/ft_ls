@@ -1,35 +1,6 @@
 #include "ft_ls.h"
 
 
-char    to_lower_map(int i, int c)
-{
-    (void)i;
-    return (ft_tolower(c));
-}
-
-int     striter(char *str, char (*f)(int, int))
-{
-    int    i;
-
-    i = 0;
-    if (str)
-    {
-        while (str[i])
-        {
-            str[i] = (*f)(i, str[i]);
-            i++;
-        }
-    }
-    return (0);
-}
-int     sort_allocs(t_list **new_elem, t_de **to_sort)
-{
-
-    if (!(*new_elem = ft_lstnew(*to_sort)))
-        return (1);
-    return (0);
-}
-
 int compare_name(char *elem, char *elem2, size_t len, size_t len2)
 {
     char    str[len + 1];
@@ -39,7 +10,7 @@ int compare_name(char *elem, char *elem2, size_t len, size_t len2)
     ft_bzero(str, len + 1);
     ft_bzero(str2, len2 + 1);
     ft_memcpy(str, elem, len);
-    ft_memcpy(str2, elem2, len);
+    ft_memcpy(str2, elem2, len2);
     striter(str, &to_lower_map);
     striter(str2, &to_lower_map);
     to_use = len >= len2 ? len :len2;
@@ -52,7 +23,6 @@ int compare(t_de *elem, t_de *elem2, int flags)
 
     if (!(flags & flag_value('t')))
     {
-        //printf("comparename\n");
         strlen = ft_strlen(elem->dp->d_name);
         strlen2 = ft_strlen(elem2->dp->d_name);
         return (compare_name(elem->dp->d_name, elem2->dp->d_name, strlen, strlen2));
@@ -76,15 +46,12 @@ int   sort_and_add(t_de *element, t_list **content, int flags)
     if (!(new_elem = ft_lstnew(element)))
         return (1);
     while (on && on->next && compare(element, on->content, flags) < 0)
-    {
-        //printf("hello\n");
         on = on->next;
-    }
     if ((!on || !on->next) && (!on || compare(element, on->content, flags) < 0))
         ft_lstadd_back(content, new_elem);
     else if (!on->prev)
         ft_lstadd_front(content, new_elem);
     else
-        ft_lstadd_before(new_elem, on);
+        ft_lstadd_before(content, new_elem, on);
     return (0);
 }

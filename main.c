@@ -1,40 +1,6 @@
 #include "ft_ls.h"
 
-int    check_for_directories(char **av, t_list **dirs, int ac)
-{
-    int     ret;
-    DIR     *dirp;
-    int     i;
-    t_ls    *dir;
-    t_list  *new_elem;
-
-
-    ret = 1;
-    i = 1;
-    while (i < ac)
-    {
-        if (*av[i] != '-')
-        {
-            ret = 0;
-            if ((dirp = opendir(av[i])) == NULL)
-                perror(av[i]);
-            else
-            {
-                if (!(dir = ft_calloc(1, sizeof(t_ls))))
-                    return(-1);
-                dir->dirp = dirp;
-                dir->dirn = av[i];
-                if (!(new_elem = ft_lstnew(dir)))
-                    return(-1);
-                ft_lstadd_back(dirs, new_elem);
-            }
-        }
-        i++;
-    }
-    return (ret);
-}
-
-void current(int flags)
+int current(int flags)
 {
     DIR     *dirp;
     t_ls    *dir;
@@ -45,17 +11,17 @@ void current(int flags)
     if ((dirp = opendir(current)) == NULL)
     {
         perror(strerror(errno));
-        exit(1);
+        return(1);
     }
     if (!(dir = ft_calloc(1, sizeof(t_ls))))
     {
         closedir(dirp);
         perror(strerror(errno));
-        exit(1);
+        return(1);
     }
     dir->dirp = dirp;
     dir->dirn = current;
-    look_in_dir(dir, flags);
+    return (look_in_dir(dir, flags));
 }
 
 void    dirclose(DIR *dirp)
@@ -64,53 +30,64 @@ void    dirclose(DIR *dirp)
     return;
 }
 
-void    launcher(char **av, int flags, int ac)
+int    launcher(char **av, int flags, int ac, int ismain)
 {
     t_list  *dir_list_static = NULL;
     t_list **dir_list = &dir_list_static;
     int     check;
 
-    (void)flags;
-    check = check_for_directories(av, dir_list, ac);
+    check = check_for_directories(av, dir_list, ac, ismain);
     if (check == -1)
     {
         ft_lstclear(dir_list, (void*) &closedir_struct);
         perror(strerror(errno));
-        exit(1);
+        return (1);
     }
-    if (!check)
+    if (flags & flag_value('r'))
     {
-        if (flags & flag_value('r'))
+        if(ft_lstiterrfree_with_flag(*dir_list, (void *)look_in_dir, flags))
         {
-            if(ft_lstiterr_with_flag(*dir_list, (void *)look_in_dir, flags))
-            {
-                perror(strerror(errno));
-                exit(1);
-            }
-        }
-        else
-        {
-            if (ft_lstiter_with_flag(*dir_list, (void *)look_in_dir, flags))
-            {
-                perror(strerror(errno));
-                exit(1);
-            }
+            perror(strerror(errno));
+            return (1);
         }
     }
     else
-        current(flags);
+    {
+        if (ft_lstiterfree_with_flag(*dir_list, (void *)look_in_dir, flags))
+        {
+            perror(strerror(errno));
+            return (1);
+        }
+    }
     ft_lstclear(dir_list, (void*)dirclose);
+    return (0);
 }
 
 int main(int ac, char **av)
 {
     int flags;
-    
+    char **av_clean;
+    int len;
 
+    av_clean = NULL;
     flags = flags_checker(&av[1], ac);
     //ft_printf("%s", flags);
-
-    launcher(av, flags, ac);
+    len = directory_checker(&av[1], ac - 1, &av_clean);
+    if (len == 0)
+    {
+        free_strp(av_clean, len);
+        if (current(flags))
+        {
+            perror(strerror(errno));
+            return (1);
+        }
+        return (0);
+    }
+    if (launcher(av_clean, flags, len, 1))
+    {
+        perror(strerror(errno));
+        return (1);
+    }
     //lookup(av[1]);
     return (0);
 }

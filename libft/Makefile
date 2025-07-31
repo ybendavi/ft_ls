@@ -57,6 +57,7 @@ SRCS = \
 	ft_lstnew.c \
 	ft_lstdelone.c \
 	ft_lstclear.c \
+	ft_lstremove.c \
 	ft_lstiter.c \
 	ft_lstiterr.c \
 	ft_lstadd_before.c \

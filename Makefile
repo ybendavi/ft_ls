@@ -9,7 +9,9 @@ SRCS =	main.c \
 		iter.c \
 		memory_free.c \
 		dirlookup.c \
-		dc_sort.c
+		dc_sort.c \
+		format_flags.c \
+		check_ifdir.c
 
 OBJS = ${SRCS:.c=.o}
 

@@ -2,12 +2,15 @@
 -a: affiche les fichiers cache
 -r: inverse l'ordre d'affichage
 -l: affiche les info detaille
+-t: tri par date
 
-1.classer le contenu d'un directory par date si le -t est actif
-    - pour ca on va avoir besoin de recuperer la struct stat avec lstat
-2.faire une fonction qui en fonction de si -l est actif va adapter l'affichage
+1.classer le contenu d'un directory par date si le -t est actif DONE
+    - pour ca on va avoir besoin de recuperer la struct stat avec lstat DONE
+2.faire une fonction qui en fonction de si -l est actif va adapter l'affichage DONE
 3.il faut que quand il y a plusieurs dossiers ou fichiers a traiter (ou si on a le -R) on affiche non du dossier:\nla liste;
-3.gerer le recursif -R
+3.gerer le recursif -R DONE
+4. debug, verifier les leak, les double free et factoriser quand c'est possible
+5.ordonner le code et les fichier
 
 a faire:
--coder une fonction a laquel on passe une structure dirent et qui retourne une chaine de caractere formate sur le model de ls -l
+-coder une fonction a laquel on passe une structure dirent et qui retourne une chaine de caractere formate sur le model de ls -l DONE

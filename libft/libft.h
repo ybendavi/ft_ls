@@ -67,11 +67,12 @@ void	ft_lstdelone(t_list *lst, void (*del)(void
 				*));
 void	ft_lstclear(t_list **lst, void (*del)(void
 				*));
+void	ft_lstremove(t_list **lst, t_list *to_delete, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 void	ft_lstiterr(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *),
 			void (*del)(void *));
-void    ft_lstadd_before(t_list *element, t_list *list_element);
+void    ft_lstadd_before(t_list **lst, t_list *element, t_list *list_element);
 
 // PRINTF //
 

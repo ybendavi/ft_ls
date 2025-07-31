@@ -25,6 +25,8 @@ void    closedir_struct(t_ls *dir)
     {
         if (dir->dirp != NULL)
             closedir(dir->dirp);
+        if (dir->dirn != NULL)
+            free(dir->dirn);
         free(dir);
     }
 }
@@ -33,4 +35,19 @@ void    free_de(t_de *element)
 {
         free(element->sblstat);
         free(element);
+}
+
+void    free_strp(char **strs, int i)
+{
+    int j;
+
+    j = 0;
+    while (j < i && strs)
+    {
+        if (strs[j])
+            free(strs[j]);
+        j++;
+    }
+    if (strs)
+        free(strs);
 }
