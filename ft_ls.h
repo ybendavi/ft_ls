@@ -40,7 +40,9 @@ int     ft_lstiterrfree_with_flag(t_list *lst, int (*f)(void *, int), int flag);
 int     striter(char *str, char (*f)(int, int));
 char    to_lower_map(int i, int c);
 void    get_infos(char *path, struct stat *sblstat);
+// Error handler
 void    lstat_error(char *filename);
+int    directory_error(char *dirn);
 // Memory handler
 void    free_dircontent_list(t_de *element);
 void    free_twostr(char *str, char *str0);

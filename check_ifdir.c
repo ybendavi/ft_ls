@@ -8,6 +8,7 @@ int    check_for_directories(char **av, t_list **dirs, int ac, int ismain)
     int     i;
     t_ls    *dir;
     t_list  *new_elem;
+    int     e;
 
 
     ret = 1;
@@ -21,7 +22,8 @@ int    check_for_directories(char **av, t_list **dirs, int ac, int ismain)
             if ((!((dirp = opendir(av[i])) == NULL)) || (!dirp && ismain))
             {
                 //printf("%s\n", av[i]);
-                if (!(dir = ft_calloc(1, sizeof(t_ls))))
+                e = directory_error(av[i]);
+                if (e == 1 || (!(dir = ft_calloc(1, sizeof(t_ls)))))
                 {
                     free_strp(av, ac);
                     return(-1);
@@ -36,7 +38,15 @@ int    check_for_directories(char **av, t_list **dirs, int ac, int ismain)
                 ft_lstadd_back(dirs, new_elem);
             }
             else
+            {
+                e = directory_error(av[i]);
+                if (e == 1)
+                {
+                    free_strp(av, ac);
+                    return(-1);
+                }
                 free(av[i]);
+            }
             i++;
         }
         free(av);
