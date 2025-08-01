@@ -24,11 +24,11 @@ int lookup_allocs(struct dirent *dp, t_ls *dir_struct, t_de **element)
         ft_strlcat(path, dp->d_name, path_size + 1);
         if (lstat(path, (*element)->sblstat) == -1)
         {
-            printf("lstatError:%s\n", dp->d_name);
+            lstat_error(path);
             free(path);
             free((*element)->sblstat);
             free(*element);
-            return (1);
+            return (2);
         }
         free(path);
         (*element)->dp = dp;
@@ -38,18 +38,22 @@ int lookup_allocs(struct dirent *dp, t_ls *dir_struct, t_de **element)
 int lookup(t_ls *dir_struct, struct dirent *dp, t_list **dircontent_list, int flags)
 { 
    t_de    *element;
+   int      res;
 
    element = NULL;
     if (dp)
     {
-
-        if (lookup_allocs(dp, dir_struct, &element))
+        res = lookup_allocs(dp, dir_struct, &element);
+        if (res == 1)
             return (1);
         //free(element->sblstat);
         //free(element);
         //printf("%s\n", dp->d_name);
-        if (sort_and_add(element, dircontent_list, flags))
-            return(1);
+        if (res != 2)
+        {
+            if (sort_and_add(element, dircontent_list, flags))
+                return(1);
+        }
         if(lookup(dir_struct, readdir(dir_struct->dirp), dircontent_list, flags))
             return (1);
     }

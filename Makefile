@@ -11,7 +11,8 @@ SRCS =	main.c \
 		dirlookup.c \
 		dc_sort.c \
 		format_flags.c \
-		check_ifdir.c
+		check_ifdir.c \
+		error.c
 
 OBJS = ${SRCS:.c=.o}
 

@@ -14,8 +14,12 @@ int	ft_lstiterfree_with_flag(t_list *lst, int (*f)(void *, int), int flag)
 			}
 		}
 		if (ft_lstiterfree_with_flag(lst->next, f, flag))
+		{
+			free(lst);
 			return (1);
+		}
 	}
+	free(lst);
 	return (0);
 }
 
@@ -58,6 +62,7 @@ int	ft_lstiterrfree_with_flag(t_list *lst, int (*f)(void *, int), int flag)
 			}
 		}
 	}
+	free(lst);
 	return (0);
 }
 

@@ -12,13 +12,13 @@ int current(int flags)
     current[1] = 0;
     if ((dirp = opendir(current)) == NULL)
     {
-        perror(strerror(errno));
+        lstat_error(current);
         return(1);
     }
     if (!(dir = ft_calloc(1, sizeof(t_ls))))
     {
         closedir(dirp);
-        perror(strerror(errno));
+        lstat_error(current);
         return(1);
     }
     dir->dirp = dirp;
@@ -42,14 +42,14 @@ int    launcher(char **av, int flags, int ac, int ismain)
     if (check == -1)
     {
         ft_lstclear(dir_list, (void*) &closedir_struct);
-        perror(strerror(errno));
+        perror("ft_ls: ");
         return (1);
     }
     if (flags & flag_value('r'))
     {
         if(ft_lstiterrfree_with_flag(*dir_list, (void *)look_in_dir, flags))
         {
-            perror(strerror(errno));
+            perror("ft_ls: ");
             return (1);
         }
     }
@@ -57,11 +57,11 @@ int    launcher(char **av, int flags, int ac, int ismain)
     {
         if (ft_lstiterfree_with_flag(*dir_list, (void *)look_in_dir, flags))
         {
-            perror(strerror(errno));
+            perror("ft_ls: ");
             return (1);
         }
     }
-    ft_lstclear(dir_list, (void*)dirclose);
+    //ft_lstclear(dir_list, (void*)dirclose);
     return (0);
 }
 
@@ -80,7 +80,7 @@ int main(int ac, char **av)
         free_strp(av_clean, len);
         if (current(flags))
         {
-            perror(strerror(errno));
+            perror("ft_ls: ");
             return (1);
         }
         return (0);
@@ -88,7 +88,7 @@ int main(int ac, char **av)
     flags += 32;
     if (launcher(av_clean, flags, len, 1))
     {
-        perror(strerror(errno));
+        perror("ft_ls:");
         return (1);
     }
     //lookup(av[1]);

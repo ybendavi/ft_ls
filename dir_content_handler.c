@@ -85,9 +85,11 @@ int     format_dircontent_for_launcher(t_list *dircontent, int flags, t_ls *dir_
             closedir_struct(dir_struct);
             return (1);
         }
+        
         ft_memcpy(args[i], dir_struct->dirn, ft_strlen(dir_struct->dirn));
         //ft_printf("argAfterCopy:%s\nsize:%d\n", args[i], ft_strlen(dir_struct->dirn));
-        args[i][ft_strlen(dir_struct->dirn)] = '/';
+        if (ft_strncmp("/", dir_struct->dirn, ft_strlen(dir_struct->dirn)))
+            args[i][ft_strlen(dir_struct->dirn)] = '/';
         ft_strlcat(args[i], content->dp->d_name, size);
         //ft_printf("%s\n", args[i]);
         dircontent = dircontent->next;
@@ -95,12 +97,12 @@ int     format_dircontent_for_launcher(t_list *dircontent, int flags, t_ls *dir_
     }
 
     ft_lstclear(&first, (void*)&free_de);
-    closedir_struct(dir_struct);
     if (launcher(args, flags, lstn, 0))
     {
         closedir_struct(dir_struct);
         return (1);
     }
+    closedir_struct(dir_struct);
     return (0);
 }
 
@@ -110,21 +112,14 @@ int     maybef(t_ls *dir_struct, int flags)
 
     if (lstat(dir_struct->dirn, &sblstat) == -1)
     {
-        write(2, "ft_ls: cannot access '", 22);
-        write(2, dir_struct->dirn, ft_strlen(dir_struct->dirn));
-        write(2, "': ", 3);
-        perror(dir_struct->dirn);
-        free(dir_struct->dirn);
-        free(dir_struct);
+        lstat_error(dir_struct->dirn);
+        closedir_struct(dir_struct);
         return(0);
     }
     if (!(sblstat.st_mode & S_IFDIR))
     {
         format_element(dir_struct->dirn, &sblstat, flags);
-        free(dir_struct->dirn);
-        if (dir_struct->dirp)
-            closedir(dir_struct->dirp);
-        free(dir_struct);
+        closedir_struct(dir_struct);
         ft_printf("\n");
         return (0);
     }
