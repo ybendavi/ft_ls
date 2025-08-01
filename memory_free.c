@@ -45,9 +45,15 @@ void    free_strp(char **strs, int i)
     while (j < i && strs)
     {
         if (strs[j])
+        {
             free(strs[j]);
+            strs[j] = NULL;
+        }
         j++;
     }
     if (strs)
+    {
         free(strs);
+        strs = NULL;
+    }
 }

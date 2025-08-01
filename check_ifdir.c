@@ -17,6 +17,7 @@ int    check_for_directories(char **av, t_list **dirs, int ac, int ismain)
         while (i < ac)
         {
             ret = 0;
+            //ft_printf("dirname%s\n", av[i]);
             if ((!((dirp = opendir(av[i])) == NULL)) || (!dirp && ismain))
             {
                 //printf("%s\n", av[i]);
@@ -55,24 +56,24 @@ int  directory_checker(char **av, int ac, char ***buff)
         return (0);
     while (i < ac)
     {
-        if (*av && *av[i])
+        if (av && av[i])
         {
-            if (*av[i] == '-')
+            if (av[i][0] && av[i][0] == '-')
                 count--;
         }
         i++;
     }
-    if (!(*buff = ft_calloc(count, sizeof(char*))))
+    if (!(*buff = ft_calloc(count, sizeof(char *))))
         return (-1);
     i = 0;
     j = 0;
-    while (j < count && *av[i])
+    while (j < count && i < ac)
     {
-        if (*av && *av[i])
+        if (av && av[i])
         {
-            if (*av[i] != '-')
+            if (!av[i][0] || (av[i][0] && av[i][0] != '-'))
             {
-                *buff[j] = ft_strdup(av[i]);
+                (*buff)[j] = ft_strdup(av[i]);
                 j++;
             }
         }

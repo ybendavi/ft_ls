@@ -4,8 +4,10 @@ int current(int flags)
 {
     DIR     *dirp;
     t_ls    *dir;
-    char    current[2];
+    char    *current;
 
+    if (!(current = ft_calloc(1, 2)))
+        return (1);
     current[0] = '.';
     current[1] = 0;
     if ((dirp = opendir(current)) == NULL)
@@ -83,6 +85,7 @@ int main(int ac, char **av)
         }
         return (0);
     }
+    flags += 32;
     if (launcher(av_clean, flags, len, 1))
     {
         perror(strerror(errno));

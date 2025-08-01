@@ -18,16 +18,25 @@
 
 void    format_element(char *path, struct stat *sblstat, int flags){
     
+    char    *cutted;
+    char    *path_c;
     if (path)
+    {
+        cutted = ft_strrchr(path, '/');
+        path_c = cutted ? cutted + 1 : path;
+        //printf("path:%s\nis_arg:%d\n", path_c, flags & 32);
+        if (path_c
+                && path_c[0]
+                && (path_c[0] != '.'
+                    || (path_c[0] == '.'
+                        && ((flags & flag_value('a')) || (flags & 32)))))
         {
-            if (path[0] != '.' || (path[0] == '.' && (flags & flag_value('a'))))
-            {
-                if (flags & flag_value('l'))
-                    get_infos(path, sblstat);
-                else
-                    ft_printf("%s ", (char*)path);
-            }
+            if (flags & flag_value('l'))
+                get_infos(path, sblstat);
+            else
+                ft_printf("%s ", (char*)path);
         }
+    }
 }
 
 void    apply_format_tolst(t_de *content, int flags)
@@ -101,27 +110,38 @@ int     maybef(t_ls *dir_struct, int flags)
 
     if (lstat(dir_struct->dirn, &sblstat) == -1)
     {
-        perror(strerror(errno));
+        write(2, "ft_ls: cannot access '", 22);
+        write(2, dir_struct->dirn, ft_strlen(dir_struct->dirn));
+        write(2, "': ", 3);
+        perror(dir_struct->dirn);
         free(dir_struct->dirn);
         free(dir_struct);
         return(0);
     }
-    format_element(dir_struct->dirn, &sblstat, flags);
-    free(dir_struct->dirn);
-    free(dir_struct);
-    ft_printf("\n");
-    return (0);
+    if (!(sblstat.st_mode & S_IFDIR))
+    {
+        format_element(dir_struct->dirn, &sblstat, flags);
+        free(dir_struct->dirn);
+        if (dir_struct->dirp)
+            closedir(dir_struct->dirp);
+        free(dir_struct);
+        ft_printf("\n");
+        return (0);
+    }
+    return (1);
 }
+
 int    look_in_dir(t_ls *dir_struct, int flags)
 {
     t_list *dircontent_list_static = NULL;
     t_list  **dircontent_list = &dircontent_list_static;
+    int     isdir;
 
 
-    if (dir_struct->dirp == NULL)
-    {
-        return (maybef(dir_struct, flags));
-    }
+    isdir = maybef(dir_struct, flags);
+    if (!isdir)
+        return (0);
+
     if (lookup(dir_struct, readdir(dir_struct->dirp), dircontent_list, flags))
     {
         ft_lstclear(dircontent_list, (void*)&free_de);
@@ -134,6 +154,9 @@ int    look_in_dir(t_ls *dir_struct, int flags)
         ft_lstiterr_with_flag(*dircontent_list, (void*)&apply_format_tolst, flags);
     else
         ft_lstiter_with_flag(*dircontent_list, (void*)&apply_format_tolst, flags);
+    ft_printf("\n");
+    if (flags & 32)
+        flags -= 32;
     if (flags & flag_value('R'))
     {
         delcuf(dircontent_list, flags);
@@ -141,6 +164,5 @@ int    look_in_dir(t_ls *dir_struct, int flags)
     }
     ft_lstclear(dircontent_list, (void*)&free_de);
     closedir_struct(dir_struct);
-    ft_printf("\n");
     return(0);
 }

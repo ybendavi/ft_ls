@@ -21,18 +21,18 @@ int compare(t_de *elem, t_de *elem2, int flags)
     size_t  strlen;
     size_t  strlen2;
 
+    strlen = ft_strlen(elem->dp->d_name);
+    strlen2 = ft_strlen(elem2->dp->d_name);
     if (!(flags & flag_value('t')))
-    {
-        strlen = ft_strlen(elem->dp->d_name);
-        strlen2 = ft_strlen(elem2->dp->d_name);
         return (compare_name(elem->dp->d_name, elem2->dp->d_name, strlen, strlen2));
-    }
     else
     {
         if (elem->sblstat->st_mtime < elem2->sblstat->st_mtime)
             return(-1);
         else if (elem->sblstat->st_mtime > elem2->sblstat->st_mtime)
             return (1); 
+        //else
+          //return (compare_name(elem->dp->d_name, elem2->dp->d_name, strlen, strlen2));  
     }
     return (0);
 }
